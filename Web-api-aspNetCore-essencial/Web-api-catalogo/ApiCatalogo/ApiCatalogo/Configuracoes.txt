@@ -1,0 +1,6 @@
+﻿Anotações sobre esta API.
+
+O que foi instalado:
+microsoft.entityframeworkcore - Entity
+microsoft.entityframeworkcore.tools - Acesso a migrations
+pomelo.entityframeworkcore.Mysql - Provedor de acesso ao SQL
