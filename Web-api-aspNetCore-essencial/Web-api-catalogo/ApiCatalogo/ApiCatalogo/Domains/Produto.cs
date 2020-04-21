@@ -19,7 +19,6 @@ namespace ApiCatalogo.Domains
         [MaxLength(300)]
         public string Descricao { get; set; }
         [Required]
-        //[DataType("decimal(16,3")]
         public decimal Preco { get; set; }
         [Required]
         [MaxLength(500)]
