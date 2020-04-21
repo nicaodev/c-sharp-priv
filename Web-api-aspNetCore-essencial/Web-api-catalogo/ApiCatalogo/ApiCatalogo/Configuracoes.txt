@@ -6,3 +6,5 @@ microsoft.entityframeworkcore.tools - Acesso a migrations
 pomelo.entityframeworkcore.Mysql - Provedor de acesso ao SQL
 
 -- Configurando o Entity utilizaremos a abordagem CodeFirst.
+
+-- Instalado MySql Workbench
