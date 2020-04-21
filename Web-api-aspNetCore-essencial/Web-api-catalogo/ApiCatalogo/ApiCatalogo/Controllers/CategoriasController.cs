@@ -24,11 +24,11 @@ namespace ApiCatalogo.Controllers
             return _context.Categorias.AsNoTracking().ToList();
         }
 
-        //[HttpGet("produtos")]
-        //public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
-        //{
-        //    return _context.Categorias.Include(x=>x.Produtos).ToList();
-        //}
+        [HttpGet("produtos")]
+        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+        {
+            return _context.Categorias.Include(x => x.Produtos).ToList();
+        }
 
         [HttpGet("{id}", Name = "ObterCategoria")]
         public ActionResult<Categoria> Get(int id)

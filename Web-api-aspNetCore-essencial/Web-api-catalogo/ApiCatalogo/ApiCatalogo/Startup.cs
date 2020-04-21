@@ -32,7 +32,8 @@ namespace ApiCatalogo
             services.AddDbContext<AppDbContext>(options => 
             options./*UseMySql*/UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); //Ignora referencia ciclica.
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
