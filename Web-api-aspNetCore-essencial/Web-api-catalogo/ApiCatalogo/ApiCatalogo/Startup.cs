@@ -29,7 +29,8 @@ namespace ApiCatalogo
         {
             //Registrando a conexão com o banco de dados como um serviço.
             //DefaultConnection no package.json
-            services.AddDbContext<AppDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(options => 
+            options./*UseMySql*/UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
         }
