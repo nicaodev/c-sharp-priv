@@ -25,15 +25,15 @@ namespace ApiCatalogo.Controllers
         }
 
         [HttpGet("produtos")]
-        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutos()
         {
-            return _context.Categorias.Include(x => x.Produtos).ToList();
+            return await _context.Categorias.Include(x => x.Produtos).ToListAsync();
         }
 
-        [HttpGet("{id}", Name = "ObterCategoria")]
-        public ActionResult<Categoria> Get(int id)
+        [HttpGet("{id:int:min(1)}", Name = "ObterCategoria")]
+        public async Task<ActionResult<Categoria>> Get(int id)
         {
-            var retorno = _context.Categorias.AsNoTracking().FirstOrDefault(x => x.CategoriaId == id);
+            var retorno =await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(x => x.CategoriaId == id);
 
             if (retorno == null)
                 return NotFound();
@@ -48,7 +48,7 @@ namespace ApiCatalogo.Controllers
 
             return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
         }
-        [HttpPut("{id}")]
+        [HttpPut("{id:int:min(1)}")]
         public ActionResult Put(int id, [FromBody] Categoria categoria)
         {
             if (id != categoria.CategoriaId)
@@ -59,7 +59,7 @@ namespace ApiCatalogo.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int:min(1)}")]
         public ActionResult<Categoria> Delete(int id)
         {
             var retorno = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
