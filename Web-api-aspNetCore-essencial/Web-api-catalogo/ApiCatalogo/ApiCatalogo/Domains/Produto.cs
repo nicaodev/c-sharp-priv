@@ -12,13 +12,13 @@ namespace ApiCatalogo.Domains
     {
         [Key]
         public int ProdutoId { get; set; }
-        [Required]
+        [Required(ErrorMessage ="O Nome do produto é obrigatório.")]
         [MaxLength(80)]
         public string Nome { get; set; }
-        [Required]
+        [Required(ErrorMessage = "A descrição do produto é obrigatório.")]
         [MaxLength(300)]
         public string Descricao { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O Preço do produto é obrigatório.")]
         public decimal Preco { get; set; }
         [Required]
         [MaxLength(500)]
