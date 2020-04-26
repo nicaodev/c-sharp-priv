@@ -1,7 +1,9 @@
 ﻿using ApiCatalogo.Context;
 using ApiCatalogo.Domains;
+using ApiCatalogo.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +16,30 @@ namespace ApiCatalogo.Controllers
     public class CategoriasController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public CategoriasController(AppDbContext contexto)
+        private readonly IConfiguration _configuration;
+        public CategoriasController(AppDbContext contexto, IConfiguration config)
         {
             _context = contexto;
+            _configuration = config;
         }
+        [HttpGet("Autor")]
+        public string GetAutor()
+        {
+            //Acessando propriedades do app.settings.json. Para demais niveis navegar via definicoes, ex: "ConnectionStrings:DefaultConnection"
+            var autor = _configuration["autor"];
+            return $"Autor: {autor}";
+        }
+
+        /***
+         * Injetando as dependencias diretamente no metodo Action do controlador. Deixando disponivel apensar para o método e não do modo tradicional _contexto
+         * que deixa disponivel para todos os métodos.
+         */
+        [HttpGet("saudacao/{nome}")]
+        public ActionResult<string> GetSaudacao([FromServices] IMeuServico meuServico, string nome)
+        {
+            return meuServico.Saudacao(nome);
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> Get()
         {
@@ -25,15 +47,15 @@ namespace ApiCatalogo.Controllers
         }
 
         [HttpGet("produtos")]
-        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutos()
         {
-            return _context.Categorias.Include(x => x.Produtos).ToList();
+            return await _context.Categorias.Include(x => x.Produtos).ToListAsync();
         }
 
-        [HttpGet("{id}", Name = "ObterCategoria")]
-        public ActionResult<Categoria> Get(int id)
+        [HttpGet("{id:int:min(1)}", Name = "ObterCategoria")]
+        public async Task<ActionResult<Categoria>> Get(int id)
         {
-            var retorno = _context.Categorias.AsNoTracking().FirstOrDefault(x => x.CategoriaId == id);
+            var retorno = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(x => x.CategoriaId == id);
 
             if (retorno == null)
                 return NotFound();
@@ -48,7 +70,7 @@ namespace ApiCatalogo.Controllers
 
             return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
         }
-        [HttpPut("{id}")]
+        [HttpPut("{id:int:min(1)}")]
         public ActionResult Put(int id, [FromBody] Categoria categoria)
         {
             if (id != categoria.CategoriaId)
@@ -59,7 +81,7 @@ namespace ApiCatalogo.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int:min(1)}")]
         public ActionResult<Categoria> Delete(int id)
         {
             var retorno = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);

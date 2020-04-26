@@ -13,26 +13,27 @@ namespace ApiCatalogo.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase // Herdando desta classe que somente contém propriedades para API. E não para Views.
     {
-        //Injeçao de dependencia nativa. Possivel pois setamos o AppDbContext como servico na classe Startup configure services.
+        //Injeao de dependencia nativa. Possivel pois setamos o AppDbContext como servico na classe Startup configure services.
         private readonly AppDbContext _context;
         public ProdutosController(AppDbContext contexto)
         {
             _context = contexto;
         }
         [HttpGet]
-        public ActionResult<IEnumerable<Produto>> Get()
+        public async Task<ActionResult<IEnumerable<Produto>>> Get()
         {
-            return _context.Produtos.AsNoTracking().ToList(); //AsNoTracking() desabilita o mapeamento do objeto para aumentar perfomance já que nao iremos altera-lo. Somente buscas.
+            return await _context.Produtos.AsNoTracking().ToListAsync(); //AsNoTracking() desabilita o mapeamento do objeto para aumentar perfomance já que nao iremos altera-lo. Somente buscas.
         }
-        [HttpGet("{id}", Name = "ObterProduto")]
-        public ActionResult<Produto> Get(int id)
+        [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
+        public async Task<ActionResult<Produto>> Get(int id)
         {
-            var retorno = _context.Produtos.AsNoTracking().FirstOrDefault(x => x.ProdutoId == id);
+            throw new Exception("Testando ExceptionMiddlewareExtensions. Forçando um erro.");
+            //var retorno = await _context.Produtos.AsNoTracking().FirstOrDefaultAsync(x => x.ProdutoId == id);
 
-            if (retorno == null)
-                return NotFound();
+            //if (retorno == null)
+            //    return NotFound();
 
-            return retorno;
+            //return retorno;
         }
         [HttpPost]
         public ActionResult Post([FromBody] Produto produto)
@@ -46,7 +47,7 @@ namespace ApiCatalogo.Controllers
 
             return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
         }
-        [HttpPut("{id}")]
+        [HttpPut("{id:int:min(1)}")]
         public ActionResult Put(int id, [FromBody] Produto produto)
         {
             //if (!ModelState.IsValid)
@@ -61,7 +62,7 @@ namespace ApiCatalogo.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int:min(1)}")]
         public ActionResult<Produto> Delete(int id)
         {
             var retorno = _context.Produtos.FirstOrDefault(r => r.ProdutoId == id);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiCatalogo.Context;
+using ApiCatalogo.Extensions;
+using ApiCatalogo.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,25 +31,30 @@ namespace ApiCatalogo
         {
             //Registrando a conexão com o banco de dados como um serviço.
             //DefaultConnection no package.json
-            services.AddDbContext<AppDbContext>(options => 
+            services.AddDbContext<AppDbContext>(options =>
             options./*UseMySql*/UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddTransient<IMeuServico, MeuServico>(); // Cria uma instancia deste serviço e implementação toda vez que for solicitada.
+
 
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); //Ignora referencia ciclica.
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline. The Middleware
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            //add middleware de tratamento de erros.
+            app.ConfigureExceptionHandler();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            //Habilita midleware de autorização
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
