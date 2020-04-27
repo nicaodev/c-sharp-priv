@@ -27,13 +27,13 @@ namespace ApiCatalogo.Controllers
         [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
         public async Task<ActionResult<Produto>> Get(int id)
         {
-            throw new Exception("Testando ExceptionMiddlewareExtensions. Forçando um erro.");
-            //var retorno = await _context.Produtos.AsNoTracking().FirstOrDefaultAsync(x => x.ProdutoId == id);
+            //throw new Exception("Testando ExceptionMiddlewareExtensions. Forçando um erro.");
+            var retorno = await _context.Produtos.AsNoTracking().FirstOrDefaultAsync(x => x.ProdutoId == id);
 
-            //if (retorno == null)
-            //    return NotFound();
+            if (retorno == null)
+                return NotFound();
 
-            //return retorno;
+            return retorno;
         }
         [HttpPost]
         public ActionResult Post([FromBody] Produto produto)
