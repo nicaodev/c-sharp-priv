@@ -1,5 +1,6 @@
 ﻿using ApiCatalogo.Context;
 using ApiCatalogo.Domains;
+using ApiCatalogo.Repository.UnitOfWork;
 using ApiCatalogo.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,10 @@ namespace ApiCatalogo.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //Injeçao de dependencia nativa. Possivel pois setamos o AppDbContext -> UnitOfWork como servico na classe Startup configure services.
+        private readonly IUnitOfWork _context;
         private readonly IConfiguration _configuration;
-        public CategoriasController(AppDbContext contexto, IConfiguration config)
+        public CategoriasController(IUnitOfWork contexto, IConfiguration config)
         {
             _context = contexto;
             _configuration = config;
@@ -43,19 +45,19 @@ namespace ApiCatalogo.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> Get()
         {
-            return _context.Categorias.AsNoTracking().ToList();
+            return _context.CategoriaRepository.Get().ToList();
         }
 
         [HttpGet("produtos")]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutos()
+        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
-            return await _context.Categorias.Include(x => x.Produtos).ToListAsync();
+            return _context.CategoriaRepository.GetCategoriasProdutos().ToList();
         }
 
         [HttpGet("{id:int:min(1)}", Name = "ObterCategoria")]
-        public async Task<ActionResult<Categoria>> Get(int id)
+        public ActionResult<Categoria> Get(int id)
         {
-            var retorno = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(x => x.CategoriaId == id);
+            var retorno = _context.CategoriaRepository.GetById(x => x.CategoriaId == id);
 
             if (retorno == null)
                 return NotFound();
@@ -65,8 +67,8 @@ namespace ApiCatalogo.Controllers
         [HttpPost]
         public ActionResult Post([FromBody] Categoria categoria)
         {
-            _context.Categorias.Add(categoria);
-            _context.SaveChanges();
+            _context.CategoriaRepository.Add(categoria);
+            _context.Commit();
 
             return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
         }
@@ -76,21 +78,21 @@ namespace ApiCatalogo.Controllers
             if (id != categoria.CategoriaId)
                 return BadRequest();
 
-            _context.Entry(categoria).State = EntityState.Modified;
-            _context.SaveChanges();
+            _context.CategoriaRepository.Update(categoria);
+            _context.Commit();
             return Ok();
         }
 
         [HttpDelete("{id:int:min(1)}")]
         public ActionResult<Categoria> Delete(int id)
         {
-            var retorno = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+            var retorno = _context.CategoriaRepository.GetById(x => x.CategoriaId == id);
 
             if (retorno == null)
                 return NotFound();
 
-            _context.Categorias.Remove(retorno);
-            _context.SaveChanges();
+            _context.CategoriaRepository.Delete(retorno);
+            _context.Commit();
             return retorno;
         }
     }
