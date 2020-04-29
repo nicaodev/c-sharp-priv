@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApiCatalogo.Context;
 using ApiCatalogo.Extensions;
 using ApiCatalogo.Logging;
+using ApiCatalogo.Repository.UnitOfWork;
 using ApiCatalogo.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +33,8 @@ namespace ApiCatalogo
         {
             //Registrando a conexão com o banco de dados como um serviço.
             //DefaultConnection no package.json
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddDbContext<AppDbContext>(options =>
             options./*UseMySql*/UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
