@@ -12,6 +12,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,11 @@ namespace ApiCatalogo
             services.AddDbContext<AppDbContext>(options =>
             options./*UseMySql*/UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            //Autenticação e autorização JWT
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
             services.AddTransient<IMeuServico, MeuServico>(); // Cria uma instancia deste serviço e implementação toda vez que for solicitada.
 
 
@@ -74,6 +80,9 @@ namespace ApiCatalogo
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //Habilita midleware de Autenticação
+            app.UseAuthentication();
             //Habilita midleware de autorização
             app.UseAuthorization();
 

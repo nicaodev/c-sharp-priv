@@ -18,8 +18,12 @@ namespace ApiCatalogo.Domains
         [Required(ErrorMessage = "A descrição do produto é obrigatório.")]
         [MaxLength(300)]
         public string Descricao { get; set; }
+
+        [DataType(DataType.Currency)]
+        [Column(TypeName ="decimal(8,2)")]
         [Required(ErrorMessage = "O Preço do produto é obrigatório.")]
         public decimal Preco { get; set; }
+
         [Required]
         [MaxLength(500)]
         public string ImagemUrl { get; set; }
