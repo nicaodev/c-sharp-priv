@@ -1,6 +1,8 @@
 ﻿using ApiCatalogo.Context;
 using ApiCatalogo.Domains;
+using ApiCatalogo.DTOs;
 using ApiCatalogo.Repository.UnitOfWork;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,49 +18,56 @@ namespace ApiCatalogo.Controllers
     {
         //Injeçao de dependencia nativa. Possivel pois setamos o AppDbContext -> UnitOfWork como servico na classe Startup configure services.
         private readonly IUnitOfWork _uof;
-        public ProdutosController(IUnitOfWork contexto)
+        private readonly IMapper _mapper;
+        public ProdutosController(IUnitOfWork contexto, IMapper mapper)
         {
             _uof = contexto;
+            _mapper = mapper;
         }
         [HttpGet("menorpreco")]
-        public ActionResult<IEnumerable<Produto>> GetProdutosPreco()
+        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosPreco()
         {
-            return _uof.ProdutoRepository.GetProdutosPorPreco().ToList();
+            var produtos = _uof.ProdutoRepository.GetProdutosPorPreco().ToList();
+            var produtosDTO = _mapper.Map<List<ProdutoDTO>>(produtos);
+            return produtosDTO;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Produto>> Get()
+        public ActionResult<IEnumerable<ProdutoDTO>> Get()
         {
-            return _uof.ProdutoRepository.Get().ToList(); //AsNoTracking() desabilita o mapeamento do objeto para aumentar perfomance já que nao iremos altera-lo. Somente buscas.
+            var produtos = _uof.ProdutoRepository.Get().ToList();
+            var produtosDTO = _mapper.Map<List<ProdutoDTO>>(produtos);
+            return produtosDTO;
         }
         [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
-        public ActionResult<Produto> Get(int id)
+        public ActionResult<ProdutoDTO> Get(int id)
         {
             //throw new Exception("Testando ExceptionMiddlewareExtensions. Forçando um erro.");
-            var retorno = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
+            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
 
-            if (retorno == null)
+            if (produto == null)
                 return NotFound();
-
-            return retorno;
+            var produtoDTOP = _mapper.Map<ProdutoDTO>(produto);
+            return produtoDTOP;
         }
         [HttpPost]
-        public ActionResult Post([FromBody] Produto produto)
+        public ActionResult Post([FromBody] ProdutoDTO produtoDto)
         {
-            //if (!ModelState.IsValid)
-            //    return BadRequest(ModelState);
-            //Usando p decorator ApiController, esta validação já é feita automaticamente.
+            var produto = _mapper.Map<Produto>(produtoDto); //Como é um post e vamos trabalhar na no banco, faz-se o map reverso.
 
             _uof.ProdutoRepository.Add(produto);
             _uof.Commit();
 
-            return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
+            var produtoDTO = _mapper.Map<ProdutoDTO>(produto);
+            return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produtoDTO);
         }
         [HttpPut("{id:int:min(1)}")]
-        public ActionResult Put(int id, [FromBody] Produto produto)
+        public ActionResult Put(int id, [FromBody] ProdutoDTO produtoDto)
         {
-            if (id != produto.ProdutoId)
+            if (id != produtoDto.ProdutoId)
                 return BadRequest();
+
+            var produto = _mapper.Map<Produto>(produtoDto);
 
             _uof.ProdutoRepository.Update(produto);
             _uof.Commit();
@@ -66,16 +75,18 @@ namespace ApiCatalogo.Controllers
         }
 
         [HttpDelete("{id:int:min(1)}")]
-        public ActionResult<Produto> Delete(int id)
+        public ActionResult<ProdutoDTO> Delete(int id)
         {
-            var retorno = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
+            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
 
-            if (retorno == null)
+            if (produto == null)
                 return NotFound();
 
-            _uof.ProdutoRepository.Delete(retorno);
+            _uof.ProdutoRepository.Delete(produto);
             _uof.Commit();
-            return retorno;
+
+            var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+            return produtoDto;
         }
     }
 }

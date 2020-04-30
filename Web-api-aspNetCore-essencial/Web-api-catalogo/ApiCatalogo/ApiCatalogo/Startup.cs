@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiCatalogo.Context;
+using ApiCatalogo.DTOs.Mappings;
 using ApiCatalogo.Extensions;
 using ApiCatalogo.Logging;
 using ApiCatalogo.Repository.UnitOfWork;
 using ApiCatalogo.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +33,14 @@ namespace ApiCatalogo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Definindo o AutoMapper
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             //Registrando a conexão com o banco de dados como um serviço.
             //DefaultConnection no package.json
             services.AddScoped<IUnitOfWork, UnitOfWork>();
