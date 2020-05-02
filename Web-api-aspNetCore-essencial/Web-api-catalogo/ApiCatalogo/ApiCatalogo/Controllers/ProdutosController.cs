@@ -15,7 +15,7 @@ namespace ApiCatalogo.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    [EnableCors("PermitirApiRequest")] //Aqui todos os metodos ficam habilitados. Se, para apensas casos especifico, declatar acima destes.
+    [EnableCors("PermitirApiRequest")] //Aqui todos os metodos ficam habilitados. Se, para apensas casos especifico, declarar acima destes.
     public class ProdutosController : ControllerBase
     {
         //Injeçao de dependencia nativa. Possivel pois setamos o AppDbContext -> UnitOfWork como servico na classe Startup configure services.
