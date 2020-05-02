@@ -37,6 +37,13 @@ namespace ApiCatalogo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Habilitando CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("PermitirApiRequest", builder => builder
+                .WithOrigins("https://www.apirequest.io").WithMethods("GET"));
+            });
+
             //Definindo o AutoMapper
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -101,6 +108,9 @@ namespace ApiCatalogo
             app.UseAuthentication();
             //Habilita midleware de autorização
             app.UseAuthorization();
+
+            //Configurando politica CORS
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {
