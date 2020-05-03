@@ -8,3 +8,4 @@ pomelo.entityframeworkcore.Mysql - Provedor de acesso ao SQL
 -- Configurando o Entity utilizaremos a abordagem CodeFirst.
 
 -- Instalado MySql Workbench
+--Projeto de Teste: xUnit Test Projetct(.Net Core)
