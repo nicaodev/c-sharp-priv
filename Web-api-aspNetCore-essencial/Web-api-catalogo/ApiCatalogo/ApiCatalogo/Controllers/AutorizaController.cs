@@ -93,7 +93,7 @@ namespace ApiCatalogo.Controllers
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: _configuration["TokenConfiguration:Issuer"],
                 audience: _configuration["TokenConfiguration:Audience"],
-                claims = claims,
+                claims : claims,
                 expires: expiration,
                 signingCredentials: credenciais);
 
