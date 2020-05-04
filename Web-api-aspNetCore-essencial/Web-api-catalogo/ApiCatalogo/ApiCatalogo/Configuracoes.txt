@@ -9,3 +9,9 @@ pomelo.entityframeworkcore.Mysql - Provedor de acesso ao SQL
 
 -- Instalado MySql Workbench
 --Projeto de Teste: xUnit Test Projetct(.Net Core)
+
+
+--- Projeto WEB
+Instalar Node.js v10.13.0-x64 (Download older versions)
+
+npm install -g @angular/cli@7.0.5
