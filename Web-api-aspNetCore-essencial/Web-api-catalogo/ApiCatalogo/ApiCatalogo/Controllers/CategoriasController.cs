@@ -4,6 +4,7 @@ using ApiCatalogo.DTOs;
 using ApiCatalogo.Repository.UnitOfWork;
 using ApiCatalogo.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[Controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase
@@ -30,6 +31,7 @@ namespace ApiCatalogo.Controllers
             _configuration = config;
             _mapper = mapper;
         }
+        [AllowAnonymous]
         [HttpGet("Autor")]
         public string GetAutor()
         {

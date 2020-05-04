@@ -5,8 +5,8 @@ import { catchError, tap, map } from 'rxjs/operators';
 import { Categoria } from 'src/model/categoria';
 import { Usuario } from 'src/model/usuario';
 
-const apiUrl = 'https://localhost:44390/api/categorias';
-const apiLoginUrl = 'https://localhost:44390/api/autoriza/login';
+const apiUrl = 'https://localhost:44331/api/categorias';
+const apiLoginUrl = 'https://localhost:44331/api/autoriza/login';
 var token ='';
 var httpOptions = {headers: new HttpHeaders({"Content-Type": "application/json"})};
 
