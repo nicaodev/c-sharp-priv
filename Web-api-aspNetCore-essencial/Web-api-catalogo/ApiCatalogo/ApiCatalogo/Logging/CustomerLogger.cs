@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,7 @@ namespace ApiCatalogo.Logging
     {
         readonly string loggerName;
         readonly CustomLoggerProviderConfiguration loggerConfig;
+
 
         public CustomerLogger(string name, CustomLoggerProviderConfiguration config)
         {
@@ -32,25 +34,44 @@ namespace ApiCatalogo.Logging
         {
             string msg = $"{logLevel.ToString()}: {eventId.Id} - {formatter(state, exception)}";
 
-            EscreverTextoNoArquivo(msg);
+            //EscreverTextoNoArquivo(msg);
         }
 
         private void EscreverTextoNoArquivo(string msg)
         {
-            string caminhoArquivoLog = @"c:\dados\Log\NicolasApi_log.txt";
-            using (StreamWriter streamWriter = new StreamWriter(caminhoArquivoLog, true))
-            {
-                try
-                {
-                    streamWriter.WriteLine(msg);
-                    streamWriter.Close();
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+            //string caminhoArquivoLog = @"D:\dados\Log\NicolasApi_log.txt";
+            //if (File.Exists(caminhoArquivoLog))
+            //    File.AppendAllText(caminhoArquivoLog, Environment.NewLine + $"{DateTime.Now:dd/MM/yyyy HH:mm:ss}" + Environment.NewLine + msg);
+            //else
+            //{
+            //    using (StreamWriter sw = new StreamWriter(caminhoArquivoLog, true))
+            //    {
 
-            }
+            //        try
+            //        {
+            //            sw.Close();
+            //            File.AppendAllText(caminhoArquivoLog, Environment.NewLine + $"{DateTime.Now:dd/MM/yyyy HH:mm:ss}" + Environment.NewLine + msg);
+            //        }
+            //        catch
+            //        {
+            //            throw;
+            //        }
+            //    }
+            //}
+            //string caminhoArquivoLog = @"c:\dados\Log\NicolasApi_log.txt";
+            //using (StreamWriter streamWriter = new StreamWriter(caminhoArquivoLog, true))
+            //{
+            //    try
+            //    {
+            //        streamWriter.WriteLine(msg);
+            //        streamWriter.Close();
+            //    }
+            //    catch (Exception)
+            //    {
+            //        throw;
+            //    }
+
+            //}
         }
     }
 }

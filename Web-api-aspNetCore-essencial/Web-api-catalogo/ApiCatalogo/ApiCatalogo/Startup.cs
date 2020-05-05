@@ -40,8 +40,8 @@ namespace ApiCatalogo
             //Habilitando CORS
             services.AddCors(options =>
             {
-                options.AddPolicy("PermitirApiRequest", builder => builder
-                .WithOrigins("https://www.apirequest.io").WithMethods("GET"));
+                options.AddPolicy("EnableCORS", builder => builder
+                .AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build());
             });
 
             //Definindo o AutoMapper
@@ -110,7 +110,7 @@ namespace ApiCatalogo
             app.UseAuthorization();
 
             //Configurando politica CORS
-            app.UseCors();
+            app.UseCors("EnableCORS");
 
             app.UseEndpoints(endpoints =>
             {
